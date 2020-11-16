@@ -1,6 +1,6 @@
 <div class="text-center">
   <div class="my-5">
-    <h1 ><img src="https://firebasestorage.googleapis.com/v0/b/covid19-ff0fd.appspot.com/o/Covid19_for_title.png?alt=media&token=0b3b8b22-88f2-4d8b-acbb-9e84e525eaa8" class="img-fluid" heigth="60" width="60"/>COVID-19</h1>
+    <h1><img src="https://firebasestorage.googleapis.com/v0/b/covid19-ff0fd.appspot.com/o/Covid19_for_title.png?alt=media&token=0b3b8b22-88f2-4d8b-acbb-9e84e525eaa8" class="img-fluid" heigth="60" width="60" />COVID-19</h1>
     <h3 class="text-secondary">Live Updates and Statistics</h3>
 
   </div>
@@ -36,7 +36,7 @@
       </tr>
       <tr class="table-primary">
         <th>Recovery Rate</th>
-        <th>{{(dataFromAPI.Global["TotalRecovered"]/dataFromAPI.Global["TotalConfirmed"]*100).toFixed(2)}} %</th>
+        <th>{{(dataFromAPI.Global["TotalRecovered"]/dataFromAPI.Global["TotalConfirmed"]*100).toFixed(2)}}%</th>
       </tr>
       <tr class="table-danger">
         <th>Total Deaths</th>
@@ -48,8 +48,24 @@
       </tr>
       <tr class="table-danger">
         <th>Mortality Rate</th>
-        <th>{{(dataFromAPI.Global["TotalDeaths"]/dataFromAPI.Global["TotalConfirmed"]*100).toFixed(2)}} %</th>
+        <th>{{(dataFromAPI.Global["TotalDeaths"]/dataFromAPI.Global["TotalConfirmed"]*100).toFixed(2)}}%</th>
       </tr>
     </tbody>
   </table>
+</div>
+
+<div class="chart mx-auto w-50 mb-5">
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Corona Virus Cases Distribution Worldwide</h5>
+    </div>
+  </div>
+  <canvas baseChart
+          [data]="pieChartData"
+          [labels]="pieChartLabels"
+          [chartType]="pieChartType"
+          [options]="pieChartOptions"
+          [colors]="pieChartColors"
+          [legend]="pieChartLegend">
+  </canvas>
 </div>
