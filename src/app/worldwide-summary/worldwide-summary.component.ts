@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { WorldwideDataService } from '../worldwide-data.service';
 
 @Component({
   selector: 'app-worldwide-summary',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WorldwideSummaryComponent implements OnInit {
 
-  constructor() { }
+  dataFromAPI: any;
+
+  constructor(private dataService: WorldwideDataService) { }
 
   ngOnInit(): void {
+    this.dataService.getDataFromAPI().subscribe(data => { this.dataFromAPI = data });
   }
 
 }

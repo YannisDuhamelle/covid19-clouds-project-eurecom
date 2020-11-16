@@ -16,39 +16,39 @@
     <tbody>
       <tr class="table-warning">
         <th>Total Cases</th>
-        <th></th>
+        <th>{{dataFromAPI.Global["TotalConfirmed"]}}</th>
       </tr>
       <tr class="table-warning">
         <th>New Cases</th>
-        <th></th>
+        <th>{{dataFromAPI.Global["NewConfirmed"]}}</th>
       </tr>
       <tr class="table-warning">
         <th>Active Cases</th>
-        <th></th>
+        <th>{{dataFromAPI.Global["TotalConfirmed"]-(dataFromAPI.Global["TotalRecovered"]+dataFromAPI.Global["TotalDeaths"])}}</th>
       </tr>
       <tr class="table-primary">
         <th>Total Recovered</th>
-        <th></th>
+        <th>{{dataFromAPI.Global["TotalRecovered"]}}</th>
       </tr>
       <tr class="table-primary">
         <th>New Recovered</th>
-        <th></th>
+        <th>{{dataFromAPI.Global["NewRecovered"]}}</th>
       </tr>
       <tr class="table-primary">
         <th>Recovery Rate</th>
-        <th></th>
+        <th>{{(dataFromAPI.Global["TotalRecovered"]/dataFromAPI.Global["TotalConfirmed"]*100).toFixed(2)}} %</th>
       </tr>
       <tr class="table-danger">
         <th>Total Deaths</th>
-        <th></th>
+        <th>{{dataFromAPI.Global["TotalDeaths"]}}</th>
       </tr>
       <tr class="table-danger">
         <th>New Deaths</th>
-        <th></th>
+        <th>{{dataFromAPI.Global["NewDeaths"]}}</th>
       </tr>
       <tr class="table-danger">
         <th>Mortality Rate</th>
-        <th></th>
+        <th>{{(dataFromAPI.Global["TotalDeaths"]/dataFromAPI.Global["TotalConfirmed"]*100).toFixed(2)}} %</th>
       </tr>
     </tbody>
   </table>
