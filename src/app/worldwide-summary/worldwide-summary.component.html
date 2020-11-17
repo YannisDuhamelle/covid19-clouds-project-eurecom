@@ -69,3 +69,22 @@
           [legend]="pieChartLegend">
   </canvas>
 </div>
+
+<div>
+  <div class="chart mx-auto w-50 mb-5">
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Daily Corona Virus Cases Worldwide</h5>
+      </div>
+    </div>
+    <div style="display: block">
+      <canvas baseChart
+              [datasets]="barChartData"
+              [labels]="barChartLabels"
+              [options]="barChartOptions"
+              [legend]="barChartLegend"
+              [chartType]="barChartType">
+      </canvas>
+    </div>
+  </div>
+</div>
