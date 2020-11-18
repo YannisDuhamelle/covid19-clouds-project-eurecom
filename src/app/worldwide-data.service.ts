@@ -37,4 +37,21 @@ export class WorldwideDataService {
     console.log(apiCovid19WorldPerDayUrl);
     return this.http.get(apiCovid19WorldPerDayUrl);
   }
+  getDataFromAPIPerDay13April() {
+    let today = new Date();
+    let valueOfToday: number = today.getDate();
+
+    let apiCovid19WorldPerDayUrl = 'https://api.covid19api.com/world';
+
+    console.log("Voici le mois du jour : " + today.getMonth());
+    apiCovid19WorldPerDayUrl += "?from=2020-04-13T00:00:00Z&to=" + today.getFullYear() + "-" + (today.getMonth() + 1) + "-";
+    if (valueOfToday < 10) {
+      apiCovid19WorldPerDayUrl += "0" + today.getDate() + "T00:00:00Z";
+    }
+    else {
+      apiCovid19WorldPerDayUrl += today.getDate() + "T00:00:00Z";
+    }
+    console.log(apiCovid19WorldPerDayUrl);
+    return this.http.get(apiCovid19WorldPerDayUrl);
+  }
 }

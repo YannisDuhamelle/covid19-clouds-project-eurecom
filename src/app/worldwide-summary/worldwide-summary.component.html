@@ -88,3 +88,54 @@
     </div>
   </div>
 </div>
+
+<div class="mx-auto w-50 h-25 mb-5">
+  <div>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Daily Corona Virus Cases Worldwide</h5>
+      </div>
+    </div>
+    <div style="display: block;">
+      <canvas baseChart width="400" height="400"
+              [datasets]="lineChartData"
+              [labels]="lineChartLabels"
+              [options]="lineChartOptions"
+              [colors]="lineChartColors"
+              [legend]="lineChartLegend"
+              [chartType]="lineChartType"></canvas>
+    </div>
+  </div>
+</div>
+
+<div class="mb-5 mx-auto w-50">
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Corona Virus Cases Per Country</h5>
+    </div>
+  </div>
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th class="text-center table-secondary">Country</th>
+        <th class="text-center table-warning">New Cases</th>
+        <th class="text-center table-warning">Total Cases</th>
+        <th class="text-center table-primary">New Recoveries</th>
+        <th class="text-center table-primary">Total Recoveries</th>
+        <th class="text-center table-danger">New Deaths</th>
+        <th class="text-center table-danger">Total Deaths</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let country of dataFromAPI.Countries">
+        <th class="table-secondary">{{country["Country"]}}</th>
+        <th class="table-warning">{{country["NewConfirmed"]}}</th>
+        <th class="table-warning">{{country["TotalConfirmed"]}}</th>
+        <th class="table-primary">{{country["NewRecovered"]}}</th>
+        <th class="table-primary">{{country["TotalRecovered"]}}</th>
+        <th class="table-danger">{{country["NewDeaths"]}}</th>
+        <th class="table-danger">{{country["TotalDeaths"]}}</th>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { WorldwideDataService } from '../worldwide-data.service';
 import { ChartDataSets, ChartType, ChartOptions } from 'chart.js';
-import { Label } from 'ng2-charts';
+import { Color, Label } from 'ng2-charts';
 
 @Component({
   selector: 'app-worldwide-summary',
@@ -34,6 +34,77 @@ export class WorldwideSummaryComponent implements OnInit {
   public barChartLegend = true;
   public barChartData: ChartDataSets[] = [];
 
+  public lineChartData: ChartDataSets[] = [];
+  public lineChartLabels: Label[] = [];
+  public lineChartOptions: (ChartOptions & { annotation: any }) = {
+    responsive: true,
+    scales: {
+      // We use this empty structure as a placeholder for dynamic theming.
+      xAxes: [{}],
+      yAxes: [
+        {
+          id: 'y-axis-0',
+          position: 'left',
+        },
+        {
+          id: 'y-axis-1',
+          position: 'right',
+          gridLines: {
+            color: 'rgba(255,0,0,0.3)',
+          },
+          ticks: {
+            fontColor: 'red',
+          }
+        }
+      ]
+    },
+    annotation: {
+      annotations: [
+        {
+          type: 'line',
+          mode: 'vertical',
+          scaleID: 'x-axis-0',
+          value: 'March',
+          borderColor: 'orange',
+          borderWidth: 2,
+          label: {
+            enabled: true,
+            fontColor: 'orange',
+            content: 'LineAnno'
+          }
+        },
+      ],
+    },
+  };
+  public lineChartColors: Color[] = [
+    { // grey
+      backgroundColor: 'rgba(148,159,177,0.2)',
+      borderColor: 'rgba(148,159,177,1)',
+      pointBackgroundColor: 'rgba(148,159,177,1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    },
+    { // dark grey
+      backgroundColor: 'rgba(77,83,96,0.2)',
+      borderColor: 'rgba(77,83,96,1)',
+      pointBackgroundColor: 'rgba(77,83,96,1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(77,83,96,1)'
+    },
+    { // red
+      backgroundColor: 'rgba(255,0,0,0.3)',
+      borderColor: 'red',
+      pointBackgroundColor: 'rgba(148,159,177,1)',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
+    }
+  ];
+  public lineChartLegend = true;
+  public lineChartType: ChartType = 'line';
+
   constructor(private dataService: WorldwideDataService) { }
 
   ngOnInit() {
@@ -41,7 +112,7 @@ export class WorldwideSummaryComponent implements OnInit {
       this.dataFromAPI = data;
       this.generatePieCharts();
     });
-    
+
     let today = new Date();
     let dayMinus7 = new Date(today);
     dayMinus7.setDate(dayMinus7.getDate() - 7);
@@ -62,7 +133,25 @@ export class WorldwideSummaryComponent implements OnInit {
       }
       console.log("Fait!")
       console.log(dailyDeath);
-      this.generateBarCharts(dailyDeath,dailyRecovered,dailyNewCase);
+      this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase);
+    });
+
+    this.dataService.getDataFromAPIPerDay13April().subscribe(dataReceive => {
+      const data: { [index: string]: any } = dataReceive;
+      console.log(data);
+      console.log(data[0]);
+      console.log(data[0]["NewDeaths"]);
+      let dailyDeath: number[] = [];
+      let dailyRecovered: number[] = [];
+      let dailyNewCase: number[] = [];
+      for (let i = data.length - 1; i >= 0; i--) {
+        dailyDeath.push(data[i]["TotalDeaths"]);
+        dailyRecovered.push(data[i]["TotalRecovered"]);
+        dailyNewCase.push(data[i]["TotalConfirmed"]);
+        console.log("YannisLine");
+        //console.log(dailyDeath);
+      }
+      this.generateLineCharts(dailyDeath, dailyRecovered, dailyNewCase);
     });
   }
 
@@ -85,5 +174,20 @@ export class WorldwideSummaryComponent implements OnInit {
       this.barChartLabels.push(day.toDateString())
     }
     console.log(this.barChartData);
+  }
+  generateLineCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
+    console.log("Cretion of the chart");
+    this.lineChartData = [
+      { data: dailyDeath, label: 'Total Deaths' },
+      { data: dailyRecovered, label: 'Total Recovered' },
+      { data: dailyNewCase, label: 'Total Cases' }
+    ];
+    let today = new Date();
+    for (let i = dailyDeath.length - 1; i >= 0; i--) {
+      let day = new Date(today);
+      day.setDate(day.getDate() - i);
+      this.lineChartLabels.push(day.toDateString())
+    }
+    console.log(this.lineChartData);
   }
 }
