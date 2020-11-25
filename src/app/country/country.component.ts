@@ -12,27 +12,26 @@ export class CountryComponent implements OnInit {
 
   name: String | undefined;
   dataFromAPI: any;
+  slug: String | undefined;
 
   constructor(private router: Router, private dataService: CountryDataService) { }
 
   ngOnInit(): void {
     let url = this.router.url;
-    let brut_name = url.split('/')[2];
-    while (brut_name.search("%20") != -1) {
-      brut_name = brut_name.replace("%20", " ");
-    }
-    this.name = brut_name;
+    this.slug = url.split('/')[2];
     this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
       if ("Countries" in data) {
         let countries: any = data["Countries"];
         for (let i = 0; i < countries.length; i++) {
-          if (countries[i].Country == this.name) {
+          if (countries[i].Slug == this.slug) {
             this.dataFromAPI = countries[i];
           }
         }
       }
+      this.name = this.dataFromAPI.Country;
       //this.generatePieCharts();
     });
+    
   }
 
 }

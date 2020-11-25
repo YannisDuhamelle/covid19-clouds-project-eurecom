@@ -128,7 +128,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let country of dataFromAPI.Countries">
-        <th class="table-secondary"><a [routerLink]="['/country', country['Country']]">{{country["Country"]}}</a></th>
+        <th class="table-secondary"><a [routerLink]="['/country', country['Slug']]">{{country["Country"]}}</a></th>
         <th class="table-warning">{{country["NewConfirmed"]}}</th>
         <th class="table-warning">{{country["TotalConfirmed"]}}</th>
         <th class="table-primary">{{country["NewRecovered"]}}</th>
