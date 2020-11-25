@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { CountryDataService } from '../country-data.service';
+
 
 @Component({
   selector: 'app-country',
@@ -9,8 +11,9 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 export class CountryComponent implements OnInit {
 
   name: String | undefined;
+  dataFromAPI: any;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private dataService: CountryDataService) { }
 
   ngOnInit(): void {
     let url = this.router.url;
@@ -19,6 +22,17 @@ export class CountryComponent implements OnInit {
       brut_name = brut_name.replace("%20", " ");
     }
     this.name = brut_name;
+    this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
+      if ("Countries" in data) {
+        let countries: any = data["Countries"];
+        for (let i = 0; i < countries.length; i++) {
+          if (countries[i].Country == this.name) {
+            this.dataFromAPI = countries[i];
+          }
+        }
+      }
+      //this.generatePieCharts();
+    });
   }
 
 }
