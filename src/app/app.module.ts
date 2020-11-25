@@ -10,11 +10,13 @@ import { ChartsModule } from 'ng2-charts';
 
 import { environment } from 'src/environments/environment';
 import { WorldwideSummaryComponent } from './worldwide-summary/worldwide-summary.component';
+import { CountryComponent } from './country/country.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    WorldwideSummaryComponent
+    WorldwideSummaryComponent,
+    CountryComponent
   ],
   imports: [
     BrowserModule,
