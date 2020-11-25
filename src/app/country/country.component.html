@@ -57,3 +57,19 @@
     </tbody>
   </table>
 </div>
+
+<div class="chart mx-auto w-50 mb-5">
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Corona Virus Cases Distribution in {{name}}</h5>
+    </div>
+  </div>
+  <canvas baseChart
+          [data]="pieChartData"
+          [labels]="pieChartLabels"
+          [chartType]="pieChartType"
+          [options]="pieChartOptions"
+          [colors]="pieChartColors"
+          [legend]="pieChartLegend">
+  </canvas>
+</div>

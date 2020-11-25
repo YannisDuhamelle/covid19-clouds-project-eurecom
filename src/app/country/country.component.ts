@@ -14,6 +14,17 @@ export class CountryComponent implements OnInit {
   dataFromAPI: any;
   slug: String | undefined;
 
+  public pieChartOptions: ChartOptions = { responsive: true, legend: { position: 'top' } };
+  public pieChartLabels: Label[] = ['Dead Cases', 'Recovered Cases', 'Active Cases'];
+  public pieChartData: number[] = [];
+  public pieChartType: ChartType = 'pie';
+  public pieChartLegend = true;
+  public pieChartColors = [
+    {
+      backgroundColor: ['rgba(255,0,0,0.3)', 'rgba(0,255,0,0.3)', 'rgba(0,0,255,0.3)'],
+    },
+  ];
+
   constructor(private router: Router, private dataService: CountryDataService) { }
 
   ngOnInit(): void {
@@ -29,9 +40,13 @@ export class CountryComponent implements OnInit {
         }
       }
       this.name = this.dataFromAPI.Country;
-      //this.generatePieCharts();
+      this.generatePieCharts();
     });
-    
+  }
+
+  generatePieCharts() {
+    let activeCases = this.dataFromAPI["TotalConfirmed"] - (this.dataFromAPI["TotalRecovered"] + this.dataFromAPI["TotalDeaths"])
+    this.pieChartData = [this.dataFromAPI["TotalDeaths"], this.dataFromAPI["TotalRecovered"], activeCases];
   }
 
 }
