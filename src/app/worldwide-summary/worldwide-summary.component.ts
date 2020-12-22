@@ -13,16 +13,9 @@ export class WorldwideSummaryComponent implements OnInit {
   dataFromAPI: any;
   dataFromAPIWorldPerDay: any;
 
-  public pieChartOptions: ChartOptions = {responsive: true,legend: {position: 'top'}};
   public pieChartLabels: Label[] = ['Dead Cases', 'Recovered Cases', 'Active Cases'];
   public pieChartData: number[] = [];
   public pieChartType: ChartType = 'pie';
-  public pieChartLegend = true;
-  public pieChartColors = [
-    {
-      backgroundColor: ['rgba(255,0,0,0.3)', 'rgba(0,255,0,0.3)', 'rgba(0,0,255,0.3)'],
-    },
-  ];
 
   public barChartOptions: ChartOptions = {
     responsive: true,
@@ -36,72 +29,6 @@ export class WorldwideSummaryComponent implements OnInit {
 
   public lineChartData: ChartDataSets[] = [];
   public lineChartLabels: Label[] = [];
-  public lineChartOptions: (ChartOptions & { annotation: any }) = {
-    responsive: true,
-    scales: {
-      // We use this empty structure as a placeholder for dynamic theming.
-      xAxes: [{}],
-      yAxes: [
-        {
-          id: 'y-axis-0',
-          position: 'left',
-        },
-        {
-          id: 'y-axis-1',
-          position: 'right',
-          gridLines: {
-            color: 'rgba(255,0,0,0.3)',
-          },
-          ticks: {
-            fontColor: 'red',
-          }
-        }
-      ]
-    },
-    annotation: {
-      annotations: [
-        {
-          type: 'line',
-          mode: 'vertical',
-          scaleID: 'x-axis-0',
-          value: 'March',
-          borderColor: 'orange',
-          borderWidth: 2,
-          label: {
-            enabled: true,
-            fontColor: 'orange',
-            content: 'LineAnno'
-          }
-        },
-      ],
-    },
-  };
-  public lineChartColors: Color[] = [
-    { // grey
-      backgroundColor: 'rgba(148,159,177,0.2)',
-      borderColor: 'rgba(148,159,177,1)',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    },
-    { // dark grey
-      backgroundColor: 'rgba(77,83,96,0.2)',
-      borderColor: 'rgba(77,83,96,1)',
-      pointBackgroundColor: 'rgba(77,83,96,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(77,83,96,1)'
-    },
-    { // red
-      backgroundColor: 'rgba(255,0,0,0.3)',
-      borderColor: 'red',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    }
-  ];
   public lineChartLegend = true;
   public lineChartType: ChartType = 'line';
 
@@ -128,8 +55,6 @@ export class WorldwideSummaryComponent implements OnInit {
         dailyDeath.push(data[i]["NewDeaths"]);
         dailyRecovered.push(data[i]["NewRecovered"]);
         dailyNewCase.push(data[i]["NewConfirmed"]);
-        console.log("Yannis");
-        //console.log(dailyDeath);
       }
       console.log("Fait!")
       console.log(dailyDeath);
@@ -148,8 +73,6 @@ export class WorldwideSummaryComponent implements OnInit {
         dailyDeath.push(data[i]["TotalDeaths"]);
         dailyRecovered.push(data[i]["TotalRecovered"]);
         dailyNewCase.push(data[i]["TotalConfirmed"]);
-        console.log("YannisLine");
-        //console.log(dailyDeath);
       }
       this.generateLineCharts(dailyDeath, dailyRecovered, dailyNewCase);
     });
@@ -160,7 +83,6 @@ export class WorldwideSummaryComponent implements OnInit {
     this.pieChartData = [this.dataFromAPI.Global["TotalDeaths"], this.dataFromAPI.Global["TotalRecovered"], activeCases];
   }
   generateBarCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
-    console.log("Cretion of the chart");
     this.barChartData = [
       { data: dailyDeath, label: 'Daily Deaths' },
       { data: dailyRecovered, label: 'Daily Recovered' },
@@ -176,11 +98,24 @@ export class WorldwideSummaryComponent implements OnInit {
     console.log(this.barChartData);
   }
   generateLineCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
-    console.log("Cretion of the chart");
+    let dailyRecoveredCum = [];
+    let dailyRecoveredInc = 0;
+    let dailyNewCaseCum = [];
+    let dailyNewCaseInc = 0;
+    let dailyDeathCum = [];
+    let dailyDeathInc = 0;
+    for (let i = 0; i < dailyNewCase.length; i++) {
+      dailyRecoveredInc += dailyRecovered[i];
+      dailyNewCaseInc += dailyNewCase[i];
+      dailyDeathInc += dailyDeath[i];
+      dailyRecoveredCum.push(dailyRecoveredInc);
+      dailyNewCaseCum.push(dailyNewCaseInc);
+      dailyDeathCum.push(dailyDeathInc);
+    }
     this.lineChartData = [
-      { data: dailyDeath, label: 'Total Deaths' },
-      { data: dailyRecovered, label: 'Total Recovered' },
-      { data: dailyNewCase, label: 'Total Cases' }
+      { data: dailyDeathCum, label: 'Total Deaths' },
+      { data: dailyRecoveredCum, label: 'Total Recovered' },
+      { data: dailyNewCaseCum, label: 'Total Cases' }
     ];
     let today = new Date();
     for (let i = dailyDeath.length - 1; i >= 0; i--) {

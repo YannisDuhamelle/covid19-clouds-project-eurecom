@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { ChartOptions, ChartType } from 'chart.js';
+import { Label } from 'ng2-charts';
 import { CountryDataService } from '../country-data.service';
 
 
@@ -18,12 +20,6 @@ export class CountryComponent implements OnInit {
   public pieChartLabels: Label[] = ['Dead Cases', 'Recovered Cases', 'Active Cases'];
   public pieChartData: number[] = [];
   public pieChartType: ChartType = 'pie';
-  public pieChartLegend = true;
-  public pieChartColors = [
-    {
-      backgroundColor: ['rgba(255,0,0,0.3)', 'rgba(0,255,0,0.3)', 'rgba(0,0,255,0.3)'],
-    },
-  ];
 
   constructor(private router: Router, private dataService: CountryDataService) { }
 

@@ -63,10 +63,7 @@
   <canvas baseChart
           [data]="pieChartData"
           [labels]="pieChartLabels"
-          [chartType]="pieChartType"
-          [options]="pieChartOptions"
-          [colors]="pieChartColors"
-          [legend]="pieChartLegend">
+          [chartType]="pieChartType">
   </canvas>
 </div>
 
@@ -81,15 +78,13 @@
       <canvas baseChart
               [datasets]="barChartData"
               [labels]="barChartLabels"
-              [options]="barChartOptions"
-              [legend]="barChartLegend"
               [chartType]="barChartType">
       </canvas>
     </div>
   </div>
 </div>
 
-<div class="mx-auto w-50 h-25 mb-5">
+<div class="mx-auto w-50 mb-5">
   <div>
     <div class="card mb-3">
       <div class="card-body">
@@ -100,9 +95,6 @@
       <canvas baseChart width="400" height="400"
               [datasets]="lineChartData"
               [labels]="lineChartLabels"
-              [options]="lineChartOptions"
-              [colors]="lineChartColors"
-              [legend]="lineChartLegend"
               [chartType]="lineChartType"></canvas>
     </div>
   </div>
