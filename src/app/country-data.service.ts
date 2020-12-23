@@ -38,4 +38,10 @@ export class CountryDataService {
     console.log(apiCovid19WorldPerDayUrl);
     return this.http.get(apiCovid19WorldPerDayUrl);
   }
+
+  getDataFromAPIDayOne(country: string) {
+    let apiCovid19CountryDayOne = 'https://api.covid19api.com/total/dayone/country/'+country;
+    console.log(apiCovid19CountryDayOne);
+    return this.http.get(apiCovid19CountryDayOne);
+  }
 }

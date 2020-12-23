@@ -26,6 +26,11 @@ export class CountryComponent implements OnInit {
   public barChartLegend = true;
   public barChartData: ChartDataSets[] = [];
 
+  public lineChartData: ChartDataSets[] = [];
+  public lineChartLabels: Label[] = [];
+  public lineChartLegend = true;
+  public lineChartType: ChartType = 'line';
+
   constructor(private router: Router, private dataService: CountryDataService) { }
 
   ngOnInit(): void {
@@ -58,6 +63,18 @@ export class CountryComponent implements OnInit {
       }
       this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase);
     });
+    this.dataService.getDataFromAPIDayOne(this.slug).subscribe(dataReceive => {
+      const data: { [index: string]: any } = dataReceive;
+      let dailyDeath: number[] = [];
+      let dailyRecovered: number[] = [];
+      let dailyNewCase: number[] = [];
+      for (let i = 0; i < data.length; i++) {
+        dailyDeath.push(data[i]["Deaths"]);
+        dailyRecovered.push(data[i]["Recovered"]);
+        dailyNewCase.push(data[i]["Confirmed"]);
+      }
+      this.generateLineCharts(dailyDeath, dailyRecovered, dailyNewCase);
+    });
   }
 
   generatePieCharts() {
@@ -79,6 +96,20 @@ export class CountryComponent implements OnInit {
       this.barChartLabels.push(day.toDateString())
     }
     console.log(this.barChartData);
+  }
+
+  generateLineCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
+    this.lineChartData = [
+      { data: dailyDeath, label: 'Total Deaths' },
+      { data: dailyRecovered, label: 'Total Recovered' },
+      { data: dailyNewCase, label: 'Total Cases' }
+    ];
+    let today = new Date();
+    for (let i = dailyDeath.length - 1; i >= 0; i--) {
+      let day = new Date(today);
+      day.setDate(day.getDate() - i);
+      this.lineChartLabels.push(day.toDateString())
+    }
   }
 
 }
