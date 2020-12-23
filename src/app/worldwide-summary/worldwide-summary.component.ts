@@ -48,7 +48,7 @@ export class WorldwideSummaryComponent implements OnInit {
       let dailyDeath: number[] = [];
       let dailyRecovered: number[] = [];
       let dailyNewCase: number[] = [];
-      for (let i = data.length - 1; i >= 0; i--) {
+      for (let i = 0; i < data.length; i++) {
         dailyDeath.push(data[i]["NewDeaths"]);
         dailyRecovered.push(data[i]["NewRecovered"]);
         dailyNewCase.push(data[i]["NewConfirmed"]);

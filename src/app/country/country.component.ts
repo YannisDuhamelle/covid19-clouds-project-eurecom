@@ -47,7 +47,6 @@ export class CountryComponent implements OnInit {
     let dayMinus8 = new Date(today);
     dayMinus8.setDate(dayMinus8.getDate() - 8);
     this.dataService.getDataFromAPIWorldPerDay(dayMinus8, today, this.slug).subscribe(dataReceive => {
-      console.log(dataReceive);
       const data: { [index: string]: any } = dataReceive;
       let dailyDeath: number[] = [];
       let dailyRecovered: number[] = [];
