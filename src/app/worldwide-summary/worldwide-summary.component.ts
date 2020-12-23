@@ -45,9 +45,6 @@ export class WorldwideSummaryComponent implements OnInit {
     dayMinus7.setDate(dayMinus7.getDate() - 7);
     this.dataService.getDataFromAPIWorldPerDay(dayMinus7, today).subscribe(dataReceive => {
       const data: { [index: string]: any } = dataReceive;
-      console.log(data);
-      console.log(data[0]);
-      console.log(data[0]["NewDeaths"]);
       let dailyDeath: number[] = [];
       let dailyRecovered: number[] = [];
       let dailyNewCase: number[] = [];
@@ -56,16 +53,11 @@ export class WorldwideSummaryComponent implements OnInit {
         dailyRecovered.push(data[i]["NewRecovered"]);
         dailyNewCase.push(data[i]["NewConfirmed"]);
       }
-      console.log("Fait!")
-      console.log(dailyDeath);
       this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase);
     });
 
     this.dataService.getDataFromAPIPerDay13April().subscribe(dataReceive => {
       const data: { [index: string]: any } = dataReceive;
-      console.log(data);
-      console.log(data[0]);
-      console.log(data[0]["NewDeaths"]);
       let dailyDeath: number[] = [];
       let dailyRecovered: number[] = [];
       let dailyNewCase: number[] = [];
@@ -95,7 +87,6 @@ export class WorldwideSummaryComponent implements OnInit {
       day.setDate(day.getDate() - i);
       this.barChartLabels.push(day.toDateString())
     }
-    console.log(this.barChartData);
   }
   generateLineCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
     let dailyRecoveredCum = [];
@@ -123,6 +114,5 @@ export class WorldwideSummaryComponent implements OnInit {
       day.setDate(day.getDate() - i);
       this.lineChartLabels.push(day.toDateString())
     }
-    console.log(this.lineChartData);
   }
 }

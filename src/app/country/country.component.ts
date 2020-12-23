@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { ChartOptions, ChartType } from 'chart.js';
+import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
 import { CountryDataService } from '../country-data.service';
 
@@ -14,12 +14,17 @@ export class CountryComponent implements OnInit {
 
   name: String | undefined;
   dataFromAPI: any;
-  slug: String | undefined;
+  slug: string | undefined;
 
   public pieChartOptions: ChartOptions = { responsive: true, legend: { position: 'top' } };
   public pieChartLabels: Label[] = ['Dead Cases', 'Recovered Cases', 'Active Cases'];
   public pieChartData: number[] = [];
   public pieChartType: ChartType = 'pie';
+
+  public barChartLabels: Label[] = [];
+  public barChartType: ChartType = 'bar';
+  public barChartLegend = true;
+  public barChartData: ChartDataSets[] = [];
 
   constructor(private router: Router, private dataService: CountryDataService) { }
 
@@ -38,11 +43,43 @@ export class CountryComponent implements OnInit {
       this.name = this.dataFromAPI.Country;
       this.generatePieCharts();
     });
+    let today = new Date();
+    let dayMinus8 = new Date(today);
+    dayMinus8.setDate(dayMinus8.getDate() - 8);
+    this.dataService.getDataFromAPIWorldPerDay(dayMinus8, today, this.slug).subscribe(dataReceive => {
+      console.log(dataReceive);
+      const data: { [index: string]: any } = dataReceive;
+      let dailyDeath: number[] = [];
+      let dailyRecovered: number[] = [];
+      let dailyNewCase: number[] = [];
+      for (let i = 1; i < data.length; i++) {
+        dailyDeath.push(data[i]["Deaths"] - data[i-1]["Deaths"]);
+        dailyRecovered.push(data[i]["Recovered"] - data[i - 1]["Recovered"]);
+        dailyNewCase.push(data[i]["Confirmed"] - data[i - 1]["Confirmed"]);
+      }
+      this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase);
+    });
   }
 
   generatePieCharts() {
     let activeCases = this.dataFromAPI["TotalConfirmed"] - (this.dataFromAPI["TotalRecovered"] + this.dataFromAPI["TotalDeaths"])
     this.pieChartData = [this.dataFromAPI["TotalDeaths"], this.dataFromAPI["TotalRecovered"], activeCases];
+  }
+
+  generateBarCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
+    this.barChartData = [
+      { data: dailyDeath, label: 'Daily Deaths' },
+      { data: dailyRecovered, label: 'Daily Recovered' },
+      { data: dailyNewCase, label: 'Daily New Cases' }
+    ];
+    let today = new Date();
+    let day = new Date(today);
+    for (let i = dailyDeath.length; i >= 1; i--) {
+      let day = new Date(today);
+      day.setDate(day.getDate() - i);
+      this.barChartLabels.push(day.toDateString())
+    }
+    console.log(this.barChartData);
   }
 
 }
