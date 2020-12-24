@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
@@ -31,27 +32,68 @@ export class CountryComponent implements OnInit {
   public lineChartLegend = true;
   public lineChartType: ChartType = 'line';
 
-  constructor(private router: Router, private dataService: CountryDataService) { }
+  constructor(private router: Router, private dataService: CountryDataService, private firestore: AngularFirestore) { }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     let url = this.router.url;
     this.slug = url.split('/')[2];
-    this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
-      if ("Countries" in data) {
-        let countries: any = data["Countries"];
-        for (let i = 0; i < countries.length; i++) {
-          if (countries[i].Slug == this.slug) {
-            this.dataFromAPI = countries[i];
-          }
+    this.firestore.collection("country_data").doc(this.slug).get().subscribe((doc) => {
+      console.log("je suis dans le subscribe de country_data firestore "+this.slug);
+      let today = new Date();
+      if (doc.exists) {
+        console.log("Doc exist");
+        let day_of_today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        let day_of_lastUpdate = new Date(doc.get("lastUpdate")["year"], doc.get("lastUpdate")["month"], doc.get("lastUpdate")["day"]);
+        if (day_of_today.toISOString() == day_of_lastUpdate.toISOString()) {
+          console.log("Already fetched today");
+          this.dataFromAPI = doc.get("dataSummary");
+          this.generatePieCharts();
+          this.name = this.dataFromAPI.Country;
+        }
+        else {
+          console.log("Not fetched today");
+          this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
+            if ("Countries" in data) {
+              let countries: any = data["Countries"];
+              for (let i = 0; i < countries.length; i++) {
+                if (countries[i].Slug == this.slug) {
+                  this.dataFromAPI = countries[i];
+                }
+              }
+            }
+            this.name = this.dataFromAPI.Country;
+            this.generatePieCharts();
+            this.firestore.collection("country_data").doc(this.slug).set({
+              dataSummary: this.dataFromAPI,
+              lastUpdate: { year: today.getFullYear(), month: today.getMonth(), day: today.getDate() }
+            }, { merge: true });
+          });
         }
       }
-      this.name = this.dataFromAPI.Country;
-      this.generatePieCharts();
+      else {
+        console.log("Doc does not exist");
+        this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
+          if ("Countries" in data) {
+            let countries: any = data["Countries"];
+            for (let i = 0; i < countries.length; i++) {
+              if (countries[i].Slug == this.slug) {
+                this.dataFromAPI = countries[i];
+              }
+            }
+          }
+          this.name = this.dataFromAPI.Country;
+          this.generatePieCharts();
+          this.firestore.collection("country_data").doc(this.slug).set({
+            dataSummary: this.dataFromAPI,
+            lastUpdate: { year: today.getFullYear(), month: today.getMonth(), day: today.getDate() }
+          }, { merge: true });
+        });
+      }
+      console.log(this.dataFromAPI);
     });
+    
     let today = new Date();
-    let dayMinus8 = new Date(today);
-    dayMinus8.setDate(dayMinus8.getDate() - 8);
-    this.dataService.getDataFromAPIDayOne(this.slug).subscribe(dataReceive => {
+    (await this.dataService.getDataFromAPIDayOne(this.slug)).subscribe(dataReceive => {
       const data: { [index: string]: any } = dataReceive;
       let dailyDeath: number[] = [];
       let dailyRecovered: number[] = [];
@@ -65,7 +107,7 @@ export class CountryComponent implements OnInit {
       }
       this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase, dailyDate);
     });
-    this.dataService.getDataFromAPIDayOne(this.slug).subscribe(dataReceive => {
+    (await this.dataService.getDataFromAPIDayOne(this.slug)).subscribe(dataReceive => {
       const data: { [index: string]: any } = dataReceive;
       let dailyDeath: number[] = [];
       let dailyRecovered: number[] = [];
@@ -85,7 +127,6 @@ export class CountryComponent implements OnInit {
   }
 
   generateBarCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[], dailyDate: string[]) {
-    console.log("DailyDate : " + dailyDate);
     this.barChartData = [
       { data: dailyDeath, label: 'Daily Deaths' },
       { data: dailyRecovered, label: 'Daily Recovered' },
