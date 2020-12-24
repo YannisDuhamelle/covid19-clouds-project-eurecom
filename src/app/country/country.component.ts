@@ -51,17 +51,19 @@ export class CountryComponent implements OnInit {
     let today = new Date();
     let dayMinus8 = new Date(today);
     dayMinus8.setDate(dayMinus8.getDate() - 8);
-    this.dataService.getDataFromAPIWorldPerDay(dayMinus8, today, this.slug).subscribe(dataReceive => {
+    this.dataService.getDataFromAPIDayOne(this.slug).subscribe(dataReceive => {
       const data: { [index: string]: any } = dataReceive;
       let dailyDeath: number[] = [];
       let dailyRecovered: number[] = [];
       let dailyNewCase: number[] = [];
-      for (let i = 1; i < data.length; i++) {
+      let dailyDate: string[] = [];
+      for (let i = data.length-7; i < data.length; i++) {
         dailyDeath.push(data[i]["Deaths"] - data[i-1]["Deaths"]);
         dailyRecovered.push(data[i]["Recovered"] - data[i - 1]["Recovered"]);
         dailyNewCase.push(data[i]["Confirmed"] - data[i - 1]["Confirmed"]);
+        dailyDate.push(data[i]["Date"])
       }
-      this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase);
+      this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase, dailyDate);
     });
     this.dataService.getDataFromAPIDayOne(this.slug).subscribe(dataReceive => {
       const data: { [index: string]: any } = dataReceive;
@@ -82,7 +84,8 @@ export class CountryComponent implements OnInit {
     this.pieChartData = [this.dataFromAPI["TotalDeaths"], this.dataFromAPI["TotalRecovered"], activeCases];
   }
 
-  generateBarCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
+  generateBarCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[], dailyDate: string[]) {
+    console.log("DailyDate : " + dailyDate);
     this.barChartData = [
       { data: dailyDeath, label: 'Daily Deaths' },
       { data: dailyRecovered, label: 'Daily Recovered' },
@@ -90,9 +93,8 @@ export class CountryComponent implements OnInit {
     ];
     let today = new Date();
     let day = new Date(today);
-    for (let i = dailyDeath.length; i >= 1; i--) {
-      let day = new Date(today);
-      day.setDate(day.getDate() - i);
+    for (let i = 0; i < dailyDate.length; i++) {
+      let day = new Date(dailyDate[i]);
       this.barChartLabels.push(day.toDateString())
     }
     console.log(this.barChartData);
