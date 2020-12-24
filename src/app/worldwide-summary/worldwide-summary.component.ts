@@ -13,6 +13,7 @@ export class WorldwideSummaryComponent implements OnInit {
 
   dataFromAPI: any;
   dataFromAPIWorldPerDay: any;
+  dataCountryFromAPI: any;
 
   public pieChartLabels: Label[] = ['Dead Cases', 'Recovered Cases', 'Active Cases'];
   public pieChartData: number[] = [];
@@ -103,6 +104,10 @@ export class WorldwideSummaryComponent implements OnInit {
         dailyNewCase.push(data[i]["TotalConfirmed"]);
       }
       this.generateLineCharts(dailyDeath, dailyRecovered, dailyNewCase);
+    });
+    this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
+      this.dataCountryFromAPI = data;
+      this.dataCountryFromAPI = this.dataCountryFromAPI.Countries;
     });
   }
 
