@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { WorldwideDataService } from '../worldwide-data.service';
 import { ChartDataSets, ChartType, ChartOptions } from 'chart.js';
 import { Color, Label } from 'ng2-charts';
+import { AngularFirestore, DocumentData } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-worldwide-summary',
@@ -32,12 +33,47 @@ export class WorldwideSummaryComponent implements OnInit {
   public lineChartLegend = true;
   public lineChartType: ChartType = 'line';
 
-  constructor(private dataService: WorldwideDataService) { }
+  constructor(private dataService: WorldwideDataService, private firestore: AngularFirestore) { }
 
   ngOnInit() {
-    this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
-      this.dataFromAPI = data;
-      this.generatePieCharts();
+    this.firestore.collection("world_summary").doc("Global").get().subscribe((doc) => {
+      console.log("je suis dans le subscribe de world_summary firestore");
+      let today = new Date();
+      if (doc.exists) {
+        console.log("Doc exist");
+        let day_of_today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        let day_of_lastUpdate = new Date(doc.get("lastUpdate")["year"], doc.get("lastUpdate")["month"], doc.get("lastUpdate")["day"]);
+        if (day_of_today.toISOString() == day_of_lastUpdate.toISOString()) {
+          console.log("Already fetched today");
+          this.dataFromAPI = doc.get("data");
+          this.generatePieCharts();
+        }
+        else {
+          console.log("Not fetched today");
+          this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
+            this.dataFromAPI = data;
+            this.dataFromAPI = this.dataFromAPI.Global;
+            this.generatePieCharts();
+            this.firestore.collection("world_summary").doc("Global").set({
+              data: this.dataFromAPI,
+              lastUpdate: { year: today.getFullYear(), month: today.getMonth(), day: today.getDate() }
+            }, { merge: true });
+          });
+        }
+      }
+      else {
+        console.log("Doc does not exist");
+        this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
+          this.dataFromAPI = data;
+          this.dataFromAPI = this.dataFromAPI.Global;
+          this.generatePieCharts();
+          this.firestore.collection("world_summary").doc("Global").set({
+            data: this.dataFromAPI,
+            lastUpdate: { year: today.getFullYear(), month: today.getMonth(), day: today.getDate() }
+          }, { merge: true });
+        });
+      }
+      console.log(this.dataFromAPI);
     });
 
     let today = new Date();
@@ -71,8 +107,9 @@ export class WorldwideSummaryComponent implements OnInit {
   }
 
   generatePieCharts() {
-    let activeCases = this.dataFromAPI.Global["TotalConfirmed"] - (this.dataFromAPI.Global["TotalRecovered"] + this.dataFromAPI.Global["TotalDeaths"])
-    this.pieChartData = [this.dataFromAPI.Global["TotalDeaths"], this.dataFromAPI.Global["TotalRecovered"], activeCases];
+
+    let activeCases = this.dataFromAPI["TotalConfirmed"] - (this.dataFromAPI["TotalRecovered"] + this.dataFromAPI["TotalDeaths"])
+    this.pieChartData = [this.dataFromAPI["TotalDeaths"], this.dataFromAPI["TotalRecovered"], activeCases];
   }
   generateBarCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
     this.barChartData = [

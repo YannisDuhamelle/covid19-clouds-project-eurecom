@@ -16,39 +16,39 @@
     <tbody>
       <tr class="table-warning">
         <th>Total Cases</th>
-        <th>{{dataFromAPI.Global["TotalConfirmed"]}}</th>
+        <th>{{dataFromAPI["TotalConfirmed"]}}</th>
       </tr>
       <tr class="table-warning">
         <th>New Cases</th>
-        <th>{{dataFromAPI.Global["NewConfirmed"]}}</th>
+        <th>{{dataFromAPI["NewConfirmed"]}}</th>
       </tr>
       <tr class="table-warning">
         <th>Active Cases</th>
-        <th>{{dataFromAPI.Global["TotalConfirmed"]-(dataFromAPI.Global["TotalRecovered"]+dataFromAPI.Global["TotalDeaths"])}}</th>
+        <th>{{dataFromAPI["TotalConfirmed"]-(dataFromAPI["TotalRecovered"]+dataFromAPI["TotalDeaths"])}}</th>
       </tr>
       <tr class="table-primary">
         <th>Total Recovered</th>
-        <th>{{dataFromAPI.Global["TotalRecovered"]}}</th>
+        <th>{{dataFromAPI["TotalRecovered"]}}</th>
       </tr>
       <tr class="table-primary">
         <th>New Recovered</th>
-        <th>{{dataFromAPI.Global["NewRecovered"]}}</th>
+        <th>{{dataFromAPI["NewRecovered"]}}</th>
       </tr>
       <tr class="table-primary">
         <th>Recovery Rate</th>
-        <th>{{(dataFromAPI.Global["TotalRecovered"]/dataFromAPI.Global["TotalConfirmed"]*100).toFixed(2)}}%</th>
+        <th>{{(dataFromAPI["TotalRecovered"]/dataFromAPI["TotalConfirmed"]*100).toFixed(2)}}%</th>
       </tr>
       <tr class="table-danger">
         <th>Total Deaths</th>
-        <th>{{dataFromAPI.Global["TotalDeaths"]}}</th>
+        <th>{{dataFromAPI["TotalDeaths"]}}</th>
       </tr>
       <tr class="table-danger">
         <th>New Deaths</th>
-        <th>{{dataFromAPI.Global["NewDeaths"]}}</th>
+        <th>{{dataFromAPI["NewDeaths"]}}</th>
       </tr>
       <tr class="table-danger">
         <th>Mortality Rate</th>
-        <th>{{(dataFromAPI.Global["TotalDeaths"]/dataFromAPI.Global["TotalConfirmed"]*100).toFixed(2)}}%</th>
+        <th>{{(dataFromAPI["TotalDeaths"]/dataFromAPI["TotalConfirmed"]*100).toFixed(2)}}%</th>
       </tr>
     </tbody>
   </table>
