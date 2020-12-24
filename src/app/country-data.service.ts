@@ -16,7 +16,7 @@ export class CountryDataService {
     return this.http.get(this.apiCovid19SummaryUrl);
   }
 
-  async getDataFromAPIDayOne(country: string) {
+  async getDataFromAPIDayOne(country: string | undefined) {
     let apiCovid19CountryDayOne = 'https://api.covid19api.com/total/dayone/country/'+country;
     console.log(apiCovid19CountryDayOne);
     return this.http.get(apiCovid19CountryDayOne);

@@ -16,6 +16,7 @@ export class CountryComponent implements OnInit {
   name: String | undefined;
   dataFromAPI: any;
   slug: string | undefined;
+  dataDayOne: any;
 
   public pieChartOptions: ChartOptions = { responsive: true, legend: { position: 'top' } };
   public pieChartLabels: Label[] = ['Dead Cases', 'Recovered Cases', 'Active Cases'];
@@ -92,33 +93,102 @@ export class CountryComponent implements OnInit {
       console.log(this.dataFromAPI);
     });
     
-    let today = new Date();
-    (await this.dataService.getDataFromAPIDayOne(this.slug)).subscribe(dataReceive => {
-      const data: { [index: string]: any } = dataReceive;
-      let dailyDeath: number[] = [];
-      let dailyRecovered: number[] = [];
-      let dailyNewCase: number[] = [];
-      let dailyDate: string[] = [];
-      for (let i = data.length-7; i < data.length; i++) {
-        dailyDeath.push(data[i]["Deaths"] - data[i-1]["Deaths"]);
-        dailyRecovered.push(data[i]["Recovered"] - data[i - 1]["Recovered"]);
-        dailyNewCase.push(data[i]["Confirmed"] - data[i - 1]["Confirmed"]);
-        dailyDate.push(data[i]["Date"])
+    this.firestore.collection("country_data").doc(this.slug).get().subscribe(async (doc) => {
+      console.log("je suis dans le subscribe de country_data firestore bar chart " + this.slug);
+      let today = new Date();
+      let dataDayOne: any;
+      if (doc.exists) {
+        console.log("Doc exist");
+        let day_of_today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        let day_of_lastUpdate = new Date(doc.get("lastUpdate")["year"], doc.get("lastUpdate")["month"], doc.get("lastUpdate")["day"]);
+        if (day_of_today.toISOString() == day_of_lastUpdate.toISOString()) {
+          console.log("Already fetched today");
+          let data = doc.get("dataDayOne");
+          let dailyDeath: number[] = [];
+          let dailyRecovered: number[] = [];
+          let dailyNewCase: number[] = [];
+          let dailyDate: string[] = [];
+          for (let i = data.length - 7; i < data.length; i++) {
+            dailyDeath.push(data[i]["Deaths"] - data[i - 1]["Deaths"]);
+            dailyRecovered.push(data[i]["Recovered"] - data[i - 1]["Recovered"]);
+            dailyNewCase.push(data[i]["Confirmed"] - data[i - 1]["Confirmed"]);
+            dailyDate.push(data[i]["Date"])
+          }
+          this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase, dailyDate);
+          dailyDeath = [];
+          dailyRecovered = [];
+          dailyNewCase = [];
+          for (let i = 0; i < data.length; i++) {
+            dailyDeath.push(data[i]["Deaths"]);
+            dailyRecovered.push(data[i]["Recovered"]);
+            dailyNewCase.push(data[i]["Confirmed"]);
+          }
+          this.generateLineCharts(dailyDeath, dailyRecovered, dailyNewCase);
+        }
+        else {
+          console.log("Not fetched today");
+          (await this.dataService.getDataFromAPIDayOne(this.slug)).subscribe(dataReceive => {
+            const data: { [index: string]: any } = dataReceive;
+            let dailyDeath: number[] = [];
+            let dailyRecovered: number[] = [];
+            let dailyNewCase: number[] = [];
+            let dailyDate: string[] = [];
+            for (let i = data.length - 7; i < data.length; i++) {
+              dailyDeath.push(data[i]["Deaths"] - data[i - 1]["Deaths"]);
+              dailyRecovered.push(data[i]["Recovered"] - data[i - 1]["Recovered"]);
+              dailyNewCase.push(data[i]["Confirmed"] - data[i - 1]["Confirmed"]);
+              dailyDate.push(data[i]["Date"])
+            }
+            this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase, dailyDate);
+            dailyDeath = [];
+            dailyRecovered = [];
+            dailyNewCase = [];
+            for (let i = 0; i < data.length; i++) {
+              dailyDeath.push(data[i]["Deaths"]);
+              dailyRecovered.push(data[i]["Recovered"]);
+              dailyNewCase.push(data[i]["Confirmed"]);
+            }
+            this.generateLineCharts(dailyDeath, dailyRecovered, dailyNewCase);
+            this.firestore.collection("country_data").doc(this.slug).set({
+              dataDayOne: data,
+              lastUpdate: { year: today.getFullYear(), month: today.getMonth(), day: today.getDate() }
+            }, { merge: true });
+          });
+        }
       }
-      this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase, dailyDate);
-    });
-    (await this.dataService.getDataFromAPIDayOne(this.slug)).subscribe(dataReceive => {
-      const data: { [index: string]: any } = dataReceive;
-      let dailyDeath: number[] = [];
-      let dailyRecovered: number[] = [];
-      let dailyNewCase: number[] = [];
-      for (let i = 0; i < data.length; i++) {
-        dailyDeath.push(data[i]["Deaths"]);
-        dailyRecovered.push(data[i]["Recovered"]);
-        dailyNewCase.push(data[i]["Confirmed"]);
+      else {
+        console.log("Doc does not exist");
+        (await this.dataService.getDataFromAPIDayOne(this.slug)).subscribe(dataReceive => {
+          const data: { [index: string]: any } = dataReceive;
+          let dailyDeath: number[] = [];
+          let dailyRecovered: number[] = [];
+          let dailyNewCase: number[] = [];
+          let dailyDate: string[] = [];
+          for (let i = data.length - 7; i < data.length; i++) {
+            dailyDeath.push(data[i]["Deaths"] - data[i - 1]["Deaths"]);
+            dailyRecovered.push(data[i]["Recovered"] - data[i - 1]["Recovered"]);
+            dailyNewCase.push(data[i]["Confirmed"] - data[i - 1]["Confirmed"]);
+            dailyDate.push(data[i]["Date"])
+          }
+          this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase, dailyDate);
+          dailyDeath = [];
+          dailyRecovered = [];
+          dailyNewCase = [];
+          for (let i = 0; i < data.length; i++) {
+            dailyDeath.push(data[i]["Deaths"]);
+            dailyRecovered.push(data[i]["Recovered"]);
+            dailyNewCase.push(data[i]["Confirmed"]);
+          }
+          this.generateLineCharts(dailyDeath, dailyRecovered, dailyNewCase);
+          this.firestore.collection("country_data").doc(this.slug).set({
+            dataDayOne: data,
+            lastUpdate: { year: today.getFullYear(), month: today.getMonth(), day: today.getDate() }
+          }, { merge: true });
+        });
       }
-      this.generateLineCharts(dailyDeath, dailyRecovered, dailyNewCase);
+      console.log(this.dataFromAPI);
     });
+    
   }
 
   generatePieCharts() {
