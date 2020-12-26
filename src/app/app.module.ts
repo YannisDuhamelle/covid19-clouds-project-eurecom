@@ -11,12 +11,16 @@ import { ChartsModule } from 'ng2-charts';
 import { environment } from 'src/environments/environment';
 import { WorldwideSummaryComponent } from './worldwide-summary/worldwide-summary.component';
 import { CountryComponent } from './country/country.component';
+import { SigninComponent } from './signin/signin.component';
+import { AddNewsComponent } from './add-news/add-news.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     WorldwideSummaryComponent,
-    CountryComponent
+    CountryComponent,
+    SigninComponent,
+    AddNewsComponent
   ],
   imports: [
     BrowserModule,

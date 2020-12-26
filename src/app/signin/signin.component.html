@@ -1,0 +1,9 @@
+<div class="text-center mb-5">
+  <div class="mb-2">
+    <h6 *ngIf="!signinService.userSignedIn()">You need to signin first in order to add a news</h6>
+    <h6 *ngIf="signinService.userSignedIn()">You need to be an authorized user to add a news</h6>
+  </div>
+  <button class="btn btn-info" (click)="signinService.signInWithGoogle()" *ngIf="!signinService.userSignedIn()">Sign in with Google</button>
+  <button class="btn btn-danger" (click)="signinService.signOut()" *ngIf="signinService.userSignedIn()">Sign out</button>
+</div>
+
