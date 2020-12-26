@@ -1,1 +1,22 @@
-<p>add-news works!</p>
+<h4 class="mx-auto w-50 mb-5">Add a news</h4>
+<form (ngSubmit)="addNews()" class="mx-auto w-50 mb-5">
+  <div class="row mb-3">
+    <div class="col-12">
+      <label for="newsInputId">New news:</label>
+      <input type="text" id="newsInputId" name="newsInputName" class="form-control" placeholder="Enter your news here" [(ngModel)]="newsFromForm" />
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-12">
+      <div>
+        <label for="countryInputId" class="mx-auto">Which country:</label>
+      </div>
+      <select name="countryInputName" id="countryInputId" [(ngModel)]="countryFromForm">
+        <option *ngFor="let country of countries" value={{country.Slug}}>{{country.Country}}</option>
+      </select>
+    </div>
+  </div>
+  <div class="text-center">
+    <button class="btn btn-primary">Add</button>
+  </div>
+</form>
