@@ -33,6 +33,12 @@ export class SigninServiceService {
         this.firestore.collection("users").doc(this.userLogged!.uid).get().subscribe((doc) => {
           if (doc.exists) {
             if (doc.get("admin") == true) {
+              let buffer_user = JSON.parse(localStorage.getItem("users")!);
+              buffer_user["admin"] = true;
+              localStorage.removeItem("users");
+              this.userLogged = buffer_user;
+              localStorage.setItem("users", JSON.stringify(buffer_user));
+              console.log(localStorage.getItem("users"));
               this.router.navigate(["add-news"]);
             }
             else {
@@ -75,6 +81,7 @@ export class SigninServiceService {
   }
 
   userSignedIn(): boolean {
+    //localStorage.removeItem("users");
     if (localStorage.getItem("users") != null) {
       return JSON.parse(localStorage.getItem("users")!) != null;
     }
@@ -82,7 +89,7 @@ export class SigninServiceService {
   }
 
   getUser() {
-    if (this.userSignedIn() == true && this.userLogged.uid != "") {
+    if (this.userSignedIn() == true) {
       return JSON.parse(localStorage.getItem("users")!);
     }
     return this.userLogged;
