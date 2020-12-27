@@ -12,7 +12,12 @@
         <label for="countryInputId" class="mx-auto">Which country:</label>
       </div>
       <select name="countryInputName" id="countryInputId" [(ngModel)]="countryFromForm">
-        <option *ngFor="let country of countries" value={{country.Slug}}>{{country.Country}}</option>
+        <optgroup label="Global news">
+          <option value="world">World</option>
+        </optgroup>
+        <optgroup label="News per country">
+          <option *ngFor="let country of countries" value={{country.Slug}}>{{country.Country}}</option>
+        </optgroup>
       </select>
     </div>
   </div>
@@ -20,3 +25,4 @@
     <button class="btn btn-primary">Add</button>
   </div>
 </form>
+

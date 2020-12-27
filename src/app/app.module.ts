@@ -14,6 +14,8 @@ import { CountryComponent } from './country/country.component';
 import { SigninComponent } from './signin/signin.component';
 import { AddNewsComponent } from './add-news/add-news.component';
 
+import { FormsModule } from '@angular/forms';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,7 +30,8 @@ import { AddNewsComponent } from './add-news/add-news.component';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     HttpClientModule,
-    ChartsModule
+    ChartsModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

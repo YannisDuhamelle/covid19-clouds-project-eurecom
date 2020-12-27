@@ -81,5 +81,12 @@ export class SigninServiceService {
     else { return false; }
   }
 
+  getUser() {
+    if (this.userSignedIn() == true && this.userLogged.uid != "") {
+      return JSON.parse(localStorage.getItem("users")!);
+    }
+    return this.userLogged;
+  }
+
 
 }
