@@ -12,7 +12,7 @@ import { SigninServiceService } from '../signin-service.service';
 export class AddNewsComponent implements OnInit {
 
   apiCovid19CountriesUrl = "https://api.covid19api.com/summary";
-  countries: { [index: string]: any; } | undefined;
+  countries: { [index: string]: any; } | any;
   newsFromForm: any;
   countryFromForm: any;
   globalNews: any;
