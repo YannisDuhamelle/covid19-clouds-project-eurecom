@@ -1,6 +1,11 @@
 <div class="card text-white bg-dark mx-auto w-50 text-center mb-5">
-  <div class="card-body">
-    <a href="">Go back to the world summary</a>
+  <div class="card-body row">
+    <div class="col-lg">
+      <a href="" class="col-lg">Go back to the world summary</a>
+    </div>
+    <div class="col-lg">
+      <button class="btn btn-danger" (click)="signinService.signOut()" *ngIf="signinService.userSignedIn()">Sign out</button>
+    </div>
   </div>
 </div>
 
