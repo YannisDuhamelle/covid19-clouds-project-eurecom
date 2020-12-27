@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentData } from '@angular/fire/firestore';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { ChartDataSets, ChartOptions, ChartType } from 'chart.js';
 import { Label } from 'ng2-charts';
@@ -32,6 +32,8 @@ export class CountryComponent implements OnInit {
   public lineChartLabels: Label[] = [];
   public lineChartLegend = true;
   public lineChartType: ChartType = 'line';
+
+  public countryNews: any;
 
   constructor(private router: Router, private dataService: CountryDataService, private firestore: AngularFirestore) { }
 
@@ -188,7 +190,8 @@ export class CountryComponent implements OnInit {
       }
       console.log(this.dataFromAPI);
     });
-    
+
+    this.getCountryNews();
   }
 
   generatePieCharts() {
@@ -225,4 +228,9 @@ export class CountryComponent implements OnInit {
     }
   }
 
+  getCountryNews() {
+    this.firestore.collection("news").doc("news_per_country").collection(this.slug!).valueChanges().subscribe((news: DocumentData[]) => {
+      this.countryNews = news
+    });
+  }
 }

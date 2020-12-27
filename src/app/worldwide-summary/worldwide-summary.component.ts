@@ -34,6 +34,8 @@ export class WorldwideSummaryComponent implements OnInit {
   public lineChartLegend = true;
   public lineChartType: ChartType = 'line';
 
+  public globalNews: any;
+
   constructor(private dataService: WorldwideDataService, private firestore: AngularFirestore) { }
 
   ngOnInit() {
@@ -109,6 +111,8 @@ export class WorldwideSummaryComponent implements OnInit {
       this.dataCountryFromAPI = data;
       this.dataCountryFromAPI = this.dataCountryFromAPI.Countries;
     });
+
+    this.getGlobalNews();
   }
 
   generatePieCharts() {
@@ -156,5 +160,11 @@ export class WorldwideSummaryComponent implements OnInit {
       day.setDate(day.getDate() - i);
       this.lineChartLabels.push(day.toDateString())
     }
+  }
+
+  getGlobalNews() {
+    this.firestore.collection("news").doc("news_per_country").collection("world").valueChanges().subscribe((news: DocumentData[]) => {
+      this.globalNews = news
+    });
   }
 }

@@ -91,3 +91,34 @@
     </div>
   </div>
 </div>
+
+<div class="mx-auto mb-5">
+  <div>
+    <div class="card mb-3 w-50 mx-auto">
+      <div class="card-body">
+        <h5 class="card-title">CoronaNews in {{name}}</h5>
+      </div>
+    </div>
+    <div class="my-3 w-75 mx-auto" *ngIf="countryNews.length > 0">
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr class="text-center">
+            <th>News</th>
+            <th>Date</th>
+            <th>Author</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let newsToDisplay of countryNews">
+            <td>{{newsToDisplay.news}}</td>
+            <td>{{newsToDisplay.date.toDate() | date}}</td>
+            <td>{{newsToDisplay.author["displayName"]}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="text-center">
+      <a href="/signin">Add some news here!</a>
+    </div>
+  </div>
+</div>

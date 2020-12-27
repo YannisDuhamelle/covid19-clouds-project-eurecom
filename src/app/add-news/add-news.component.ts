@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore } from '@angular/fire/firestore';
+import { AngularFirestore, DocumentData } from '@angular/fire/firestore';
 import { News } from '../news.model';
 import { SigninServiceService } from '../signin-service.service';
 
@@ -15,6 +15,7 @@ export class AddNewsComponent implements OnInit {
   countries: { [index: string]: any; } | undefined;
   newsFromForm: any;
   countryFromForm: any;
+  globalNews: any;
 
   constructor(private http: HttpClient, private firestore: AngularFirestore, public signinService: SigninServiceService) {
     this.getDataFromAPIWorldCountries().subscribe((doc) => {
@@ -24,6 +25,7 @@ export class AddNewsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.firestore.collection("news").doc("news_per_country").collection("world").valueChanges().subscribe((news: DocumentData[]) => { this.globalNews = news });
   }
 
   getDataFromAPIWorldCountries() {
@@ -38,8 +40,9 @@ export class AddNewsComponent implements OnInit {
         country: this.countryFromForm,
         author: this.signinService.getUser()
       };
-      console.log(newNews);
-      this.firestore.collection("news").doc("news_per_country").collection(newNews.country).add(newNews);
+      if (newNews.country != "world"){
+        this.firestore.collection("news").doc("news_per_country").collection(newNews.country).add(newNews);
+      }
       this.firestore.collection("news").doc("news_per_country").collection("world").add(newNews);
 
       //This is for making the form empty to let us fill it again

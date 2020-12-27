@@ -25,4 +25,21 @@
     <button class="btn btn-primary">Add</button>
   </div>
 </form>
-
+<div class="my-3 w-75 mx-auto" *ngIf="globalNews.length > 0">
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr class="text-center">
+        <th>Country</th>
+        <th>News</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let newsToDisplay of globalNews">
+        <td>{{newsToDisplay.country}}</td>
+        <td>{{newsToDisplay.news}}</td>
+        <td>{{newsToDisplay.date.toDate() | date}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
