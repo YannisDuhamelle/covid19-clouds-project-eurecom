@@ -161,5 +161,93 @@ export class WorldwideSummaryComponent implements OnInit {
 
   sortCountries(selectedSort: number) {
     this.selected = selectedSort;
+    if (selectedSort == 1) {
+      this.dataCountryFromAPI.sort((a: { Country: string; }, b: { Country: string; }) => {
+        let fa = a.Country.toLowerCase(),
+          fb = b.Country.toLowerCase();
+
+        if (fa < fb) {
+          return -1;
+        }
+        if (fa > fb) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    else if (selectedSort == 2) {
+      this.dataCountryFromAPI.sort((a: { Country: string; }, b: { Country: string; }) => {
+        let fa = a.Country.toLowerCase(),
+          fb = b.Country.toLowerCase();
+
+        if (fa < fb) {
+          return 1;
+        }
+        if (fa > fb) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+    else if (selectedSort == 3) {
+      this.dataCountryFromAPI.sort((a: { NewConfirmed: number; }, b: { NewConfirmed: number; }) => {
+        return b.NewConfirmed - a.NewConfirmed;
+      });
+    }
+    else if (selectedSort == 4) {
+      this.dataCountryFromAPI.sort((a: { NewConfirmed: number; }, b: { NewConfirmed: number; }) => {
+        return a.NewConfirmed - b.NewConfirmed;
+      });
+    }
+    else if (selectedSort == 5) {
+      this.dataCountryFromAPI.sort((a: { TotalConfirmed: number; }, b: { TotalConfirmed: number; }) => {
+        return b.TotalConfirmed - a.TotalConfirmed;
+      });
+    }
+    else if (selectedSort == 6) {
+      this.dataCountryFromAPI.sort((a: { TotalConfirmed: number; }, b: { TotalConfirmed: number; }) => {
+        return a.TotalConfirmed - b.TotalConfirmed;
+      });
+    }
+    else if (selectedSort == 7) {
+      this.dataCountryFromAPI.sort((a: { NewRecovered: number; }, b: { NewRecovered: number; }) => {
+        return b.NewRecovered - a.NewRecovered;
+      });
+    }
+    else if (selectedSort == 8) {
+      this.dataCountryFromAPI.sort((a: { NewRecovered: number; }, b: { NewRecovered: number; }) => {
+        return a.NewRecovered - b.NewRecovered;
+      });
+    }
+    else if (selectedSort == 9) {
+      this.dataCountryFromAPI.sort((a: { TotalRecovered: number; }, b: { TotalRecovered: number; }) => {
+        return b.TotalRecovered - a.TotalRecovered;
+      });
+    }
+    else if (selectedSort == 10) {
+      this.dataCountryFromAPI.sort((a: { TotalRecovered: number; }, b: { TotalRecovered: number; }) => {
+        return a.TotalRecovered - b.TotalRecovered;
+      });
+    }
+    else if (selectedSort == 11) {
+      this.dataCountryFromAPI.sort((a: { NewDeaths: number; }, b: { NewDeaths: number; }) => {
+        return b.NewDeaths - a.NewDeaths;
+      });
+    }
+    else if (selectedSort == 12) {
+      this.dataCountryFromAPI.sort((a: { NewDeaths: number; }, b: { NewDeaths: number; }) => {
+        return a.NewDeaths - b.NewDeaths;
+      });
+    }
+    else if (selectedSort == 13) {
+      this.dataCountryFromAPI.sort((a: { TotalDeaths: number; }, b: { TotalDeaths: number; }) => {
+        return b.TotalDeaths - a.TotalDeaths;
+      });
+    }
+    else if (selectedSort == 14) {
+      this.dataCountryFromAPI.sort((a: { TotalDeaths: number; }, b: { TotalDeaths: number; }) => {
+        return a.TotalDeaths - b.TotalDeaths;
+      });
+    }
   }
 }
