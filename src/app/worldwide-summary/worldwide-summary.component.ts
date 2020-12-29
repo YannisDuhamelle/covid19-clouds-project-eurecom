@@ -36,6 +36,8 @@ export class WorldwideSummaryComponent implements OnInit {
 
   public globalNews: any;
 
+  public selected = 1;
+
   constructor(private dataService: WorldwideDataService, private firestore: AngularFirestore) { }
 
   ngOnInit() {
@@ -166,5 +168,9 @@ export class WorldwideSummaryComponent implements OnInit {
     this.firestore.collection("news").doc("news_per_country").collection("world").valueChanges().subscribe((news: DocumentData[]) => {
       this.globalNews = news
     });
+  }
+
+  sortCountries(selectedSort: number) {
+    this.selected = selectedSort;
   }
 }
