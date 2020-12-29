@@ -36,7 +36,7 @@ export class WorldwideSummaryComponent implements OnInit {
 
   public globalNews: any;
 
-  public selected = 1;
+  public selected = 0;
 
   constructor(private dataService: WorldwideDataService, private firestore: AngularFirestore) { }
 
@@ -137,24 +137,13 @@ export class WorldwideSummaryComponent implements OnInit {
     }
   }
   generateLineCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
-    let dailyRecoveredCum = [];
-    let dailyRecoveredInc = 0;
-    let dailyNewCaseCum = [];
-    let dailyNewCaseInc = 0;
-    let dailyDeathCum = [];
-    let dailyDeathInc = 0;
-    for (let i = 0; i < dailyNewCase.length; i++) {
-      dailyRecoveredInc += dailyRecovered[i];
-      dailyNewCaseInc += dailyNewCase[i];
-      dailyDeathInc += dailyDeath[i];
-      dailyRecoveredCum.push(dailyRecoveredInc);
-      dailyNewCaseCum.push(dailyNewCaseInc);
-      dailyDeathCum.push(dailyDeathInc);
-    }
+    let dailyRecoveredSort = dailyRecovered.sort((a, b) => a - b);
+    let dailyNewCaseSort = dailyNewCase.sort((a, b) => a - b);
+    let dailyDeathSort = dailyDeath.sort((a, b) => a-b);
     this.lineChartData = [
-      { data: dailyDeathCum, label: 'Total Deaths' },
-      { data: dailyRecoveredCum, label: 'Total Recovered' },
-      { data: dailyNewCaseCum, label: 'Total Cases' }
+      { data: dailyDeathSort, label: 'Total Deaths' },
+      { data: dailyRecoveredSort, label: 'Total Recovered' },
+      { data: dailyNewCaseSort, label: 'Total Cases' }
     ];
     let today = new Date();
     for (let i = dailyDeath.length - 1; i >= 0; i--) {
