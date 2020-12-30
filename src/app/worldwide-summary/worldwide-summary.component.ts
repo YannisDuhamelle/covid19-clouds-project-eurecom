@@ -9,6 +9,8 @@ import { AngularFirestore, DocumentData } from '@angular/fire/firestore';
   templateUrl: './worldwide-summary.component.html',
   styleUrls: ['./worldwide-summary.component.css']
 })
+
+// The WorldwideSummaryComponent is the component that is handling the data from the world/welcoming page
 export class WorldwideSummaryComponent implements OnInit {
 
   dataFromAPI: any;
@@ -19,11 +21,6 @@ export class WorldwideSummaryComponent implements OnInit {
   public pieChartData: number[] = [];
   public pieChartType: ChartType = 'pie';
 
-  public barChartOptions: ChartOptions = {
-    responsive: true,
-    // We use these empty structures as placeholders for dynamic theming.
-    scales: { xAxes: [{}], yAxes: [{}] },
-  };
   public barChartLabels: Label[] = [];
   public barChartType: ChartType = 'bar';
   public barChartLegend = true;
@@ -40,21 +37,29 @@ export class WorldwideSummaryComponent implements OnInit {
 
   constructor(private dataService: WorldwideDataService, private firestore: AngularFirestore) { }
 
+  // This function is called at the creation of the page
   ngOnInit() {
+
+    // First, we are looking in the firestore database if there are already some data for the world summary table (and pie charts)
     this.firestore.collection("world_summary").doc("Global").get().subscribe((doc) => {
-      console.log("je suis dans le subscribe de world_summary firestore");
+
       let today = new Date();
+
+      // If there is already some data in the firestore database, we are comparing the date of those data with the date of today
       if (doc.exists) {
-        console.log("Doc exist");
+
         let day_of_today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
         let day_of_lastUpdate = new Date(doc.get("lastUpdate")["year"], doc.get("lastUpdate")["month"], doc.get("lastUpdate")["day"]);
+
+        // If the date of the data in the firestore DB is the same than today, we are pulling those data
+        // Then, we are using it for the table and the pie chart
         if (day_of_today.toISOString() == day_of_lastUpdate.toISOString()) {
-          console.log("Already fetched today");
           this.dataFromAPI = doc.get("data");
           this.generatePieCharts();
         }
+        // If the date of the data in the firestore DB isn't the same than today,
+        // we are pulling data from the API, push them to replace the one in firestore, and then use them for the table and the pie chart
         else {
-          console.log("Not fetched today");
           this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
             this.dataFromAPI = data;
             this.dataFromAPI = this.dataFromAPI.Global;
@@ -66,8 +71,10 @@ export class WorldwideSummaryComponent implements OnInit {
           });
         }
       }
+
+      // If there is not data of the country in the firestore database yet,
+      // we are pulling data from the API, push them to save it in firestore, and then use them for the table and the pie chart
       else {
-        console.log("Doc does not exist");
         this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
           this.dataFromAPI = data;
           this.dataFromAPI = this.dataFromAPI.Global;
@@ -78,65 +85,81 @@ export class WorldwideSummaryComponent implements OnInit {
           }, { merge: true });
         });
       }
-      console.log(this.dataFromAPI);
     });
 
+    // Then, we are computing the bar charts from the API calls "world?[7_days_ago]to[today]
     let today = new Date();
     let dayMinus7 = new Date(today);
     dayMinus7.setDate(dayMinus7.getDate() - 7);
     this.dataService.getDataFromAPIWorldPerDay(dayMinus7, today).subscribe(dataReceive => {
-      const data: { [index: string]: any } = dataReceive;
-      let dailyDeath: number[] = [];
-      let dailyRecovered: number[] = [];
-      let dailyNewCase: number[] = [];
-      for (let i = 0; i < data.length; i++) {
-        dailyDeath.push(data[i]["NewDeaths"]);
-        dailyRecovered.push(data[i]["NewRecovered"]);
-        dailyNewCase.push(data[i]["NewConfirmed"]);
-      }
-      this.generateBarCharts(dailyDeath, dailyRecovered, dailyNewCase);
+      const data: { [index: string]: any } | any = dataReceive;
+      this.generateBarCharts(data);
     });
 
+    // We are computing the line charts from the API calls "world?[13_April]to[today]
     this.dataService.getDataFromAPIPerDay13April().subscribe(dataReceive => {
-      const data: { [index: string]: any } = dataReceive;
-      let dailyDeath: number[] = [];
-      let dailyRecovered: number[] = [];
-      let dailyNewCase: number[] = [];
-      for (let i = data.length - 1; i >= 0; i--) {
-        dailyDeath.push(data[i]["TotalDeaths"]);
-        dailyRecovered.push(data[i]["TotalRecovered"]);
-        dailyNewCase.push(data[i]["TotalConfirmed"]);
-      }
-      this.generateLineCharts(dailyDeath, dailyRecovered, dailyNewCase);
+      const data: { [index: string]: any } | any = dataReceive;
+      this.generateLineCharts(data);
     });
+
+    // We are computing the news to display on the world page
+    this.getGlobalNews();
+
+    // Finally, we are computing the country list from the API call "summary"
     this.dataService.getDataFromAPIWorldSummary().subscribe(data => {
       this.dataCountryFromAPI = data;
       this.dataCountryFromAPI = this.dataCountryFromAPI.Countries;
     });
-
-    this.getGlobalNews();
   }
 
+  // This function is used to set the parameters of the pie chart
   generatePieCharts() {
-
     let activeCases = this.dataFromAPI["TotalConfirmed"] - (this.dataFromAPI["TotalRecovered"] + this.dataFromAPI["TotalDeaths"])
     this.pieChartData = [this.dataFromAPI["TotalDeaths"], this.dataFromAPI["TotalRecovered"], activeCases];
   }
-  generateBarCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
+
+  // This function is used to set the parameters of the bar chart
+  // We received as argument the data from the API call "world" that is giving us all data per day for the last 7 days
+  generateBarCharts(data: string | any[]) {
+
+    let dailyDeath: number[] = [];
+    let dailyRecovered: number[] = [];
+    let dailyNewCase: number[] = [];
+
+     // We are pushing the data categories in a special list that will be used to display the bar chart
+    for (let i = 0; i < data.length; i++) {
+      dailyDeath.push(data[i]["NewDeaths"]);
+      dailyRecovered.push(data[i]["NewRecovered"]);
+      dailyNewCase.push(data[i]["NewConfirmed"]);
+    }
     this.barChartData = [
       { data: dailyDeath, label: 'Daily Deaths' },
       { data: dailyRecovered, label: 'Daily Recovered' },
       { data: dailyNewCase, label: 'Daily New Cases' }
     ];
+    // We need to compute the x-axis (the date of the corresponding data)
     let today = new Date();
-    let day = new Date(today);
     for (let i = dailyDeath.length-1; i >= 0; i--) {
       let day = new Date(today);
       day.setDate(day.getDate() - i);
       this.barChartLabels.push(day.toDateString())
     }
   }
-  generateLineCharts(dailyDeath: number[], dailyRecovered: any[], dailyNewCase: any[]) {
+
+  // This function is used to set the parameters of the line chart
+  // We received as argument the data from the API call "world" that is giving us all data per day since the 14 april
+  generateLineCharts(data: string | any[]) {
+
+    let dailyDeath: number[] = [];
+    let dailyRecovered: number[] = [];
+    let dailyNewCase: number[] = [];
+
+    // We are pushing the data categories in a special list that will be used to display the line chart
+    for (let i = data.length - 1; i >= 0; i--) {
+      dailyDeath.push(data[i]["TotalDeaths"]);
+      dailyRecovered.push(data[i]["TotalRecovered"]);
+      dailyNewCase.push(data[i]["TotalConfirmed"]);
+    }
     let dailyRecoveredSort = dailyRecovered.sort((a, b) => a - b);
     let dailyNewCaseSort = dailyNewCase.sort((a, b) => a - b);
     let dailyDeathSort = dailyDeath.sort((a, b) => a-b);
@@ -145,6 +168,7 @@ export class WorldwideSummaryComponent implements OnInit {
       { data: dailyRecoveredSort, label: 'Total Recovered' },
       { data: dailyNewCaseSort, label: 'Total Cases' }
     ];
+    // We need to compute the x-axis (the date of the corresponding data)
     let today = new Date();
     for (let i = dailyDeath.length - 1; i >= 0; i--) {
       let day = new Date(today);
@@ -153,14 +177,19 @@ export class WorldwideSummaryComponent implements OnInit {
     }
   }
 
+  // This function is used to pull the world news
   getGlobalNews() {
     this.firestore.collection("news").doc("news_per_country").collection("world").valueChanges().subscribe((news: DocumentData[]) => {
       this.globalNews = news
     });
   }
 
+  // This function is used to sort the country list depending on differennt criteria
   sortCountries(selectedSort: number) {
+
+    // We are modifying the place of the displayedsorted colomn (on the html page)
     this.selected = selectedSort;
+
     if (selectedSort == 1) {
       this.dataCountryFromAPI.sort((a: { Country: string; }, b: { Country: string; }) => {
         let fa = a.Country.toLowerCase(),

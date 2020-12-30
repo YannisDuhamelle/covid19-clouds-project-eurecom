@@ -7,6 +7,7 @@ import { SigninComponent } from './signin/signin.component';
 
 import { WorldwideSummaryComponent } from './worldwide-summary/worldwide-summary.component';
 
+// This is the file explaining the routing policy
 const routes: Routes = [
   { path: "", pathMatch: "full", component: WorldwideSummaryComponent },
   { path: "country/:name", component: CountryComponent },

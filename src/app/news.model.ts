@@ -1,5 +1,6 @@
 import { SigninServiceService } from './signin-service.service';
 
+// This is the model for the News object
 export class News {
 
   date: Date;
