@@ -20,40 +20,23 @@ export class WorldwideDataService {
 
   // This function is calling the API world?from=[7_days_ago]&to=[today] (for the bar chart)
   getDataFromAPIWorldPerDay(day: Date, dayPlusOne: Date) {
-    let valueOfDay: number = day.getDate();
-    let valueOfDayPlusOne: number = dayPlusOne.getDate();
+    day = new Date(day.getFullYear(), day.getMonth(), day.getDate(), 1);
+    dayPlusOne = new Date(dayPlusOne.getFullYear(), dayPlusOne.getMonth(), dayPlusOne.getDate(), 1);
+
     let apiCovid19WorldPerDayUrl = 'https://api.covid19api.com/world';
-    apiCovid19WorldPerDayUrl += "?from=" + day.getFullYear() + "-" + (day.getMonth()+1) + "-";
-    if (valueOfDay < 10) {
-      apiCovid19WorldPerDayUrl += "0" + day.getDate();
-    }
-    else {
-      apiCovid19WorldPerDayUrl += day.getDate();
-    }
-    apiCovid19WorldPerDayUrl += "T00:00:00Z&to=" + dayPlusOne.getFullYear() + "-" + (dayPlusOne.getMonth()+1) + "-";
-    if (valueOfDayPlusOne < 10) {
-      apiCovid19WorldPerDayUrl += "0" + dayPlusOne.getDate() + "T00:00:00Z";
-    }
-    else {
-      apiCovid19WorldPerDayUrl += dayPlusOne.getDate() + "T00:00:00Z";
-    }
+    apiCovid19WorldPerDayUrl += "?from=" + day.toISOString() + "&to=" + dayPlusOne.toISOString();
+    console.log(apiCovid19WorldPerDayUrl);
     return this.http.get(apiCovid19WorldPerDayUrl);
   }
 
   // This function is calling the API world?from=[13_April]&to=[today] (for the line chart)
   getDataFromAPIPerDay13April() {
     let today = new Date();
-    let valueOfToday: number = today.getDate();
+    today = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 1);
 
     let apiCovid19WorldPerDayUrl = 'https://api.covid19api.com/world';
-
-    apiCovid19WorldPerDayUrl += "?from=2020-04-13T00:00:00Z&to=" + today.getFullYear() + "-" + (today.getMonth() + 1) + "-";
-    if (valueOfToday < 10) {
-      apiCovid19WorldPerDayUrl += "0" + today.getDate() + "T00:00:00Z";
-    }
-    else {
-      apiCovid19WorldPerDayUrl += today.getDate() + "T00:00:00Z";
-    }
+    apiCovid19WorldPerDayUrl += "?from=2020-04-13T00:00:00Z&to=" + today.toISOString();
+    console.log(apiCovid19WorldPerDayUrl);
     return this.http.get(apiCovid19WorldPerDayUrl);
   }
 }
